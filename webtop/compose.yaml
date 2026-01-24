@@ -13,7 +13,7 @@ services:
       - DOCKER_MODS=linuxserver/mods:universal-package-install
       - INSTALL_PACKAGES=gstreamer1.0-tools|gstreamer1.0-plugins-good|gstreamer1.0-plugins-bad|gstreamer1.0-plugins-ugly|gstreamer1.0-libav|libva2|vainfo|nvidia-vaapi-driver
       - LIBVA_DRIVER_NAME=nvidia
-      - DRI_PRIME=1
+      #- DRI_PRIME=1
 
     deploy:
       resources:
