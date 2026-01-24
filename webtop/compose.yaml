@@ -41,7 +41,7 @@ services:
 
     # Ensure /tmp has correct perms/owner (fixes "_X11-unix should be root")
     tmpfs:
-      - /tmp:rw,nosuid,nodev,mode=1777
+      - /tmp:rw,exec,nosuid,nodev,mode=1777
 
     # Resource limits for your hardware
     cpus: 10
