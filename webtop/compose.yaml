@@ -48,7 +48,7 @@ services:
       - no-new-privileges:true
 
     # Stability & resources
-    shm_size: "4gb"          # 👈 this is the one that actually matters
+    shm_size: "8gb"          # 👈 this is the one that actually matters
     # SHM_SIZE env is unused by LSIO; safe to remove
 
     # Ensure /tmp has correct perms/owner (fixes "_X11-unix should be root")
