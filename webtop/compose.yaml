@@ -30,8 +30,8 @@ services:
       - chromium-config:/config 
       - ./webtop/custom-cont-init.d:/custom-cont-init.d
 
-    security_opt:
-      - no-new-privileges:false
+    #security_opt:
+    #  - no-new-privileges:true
 
     # Stability & resources
     shm_size: "8gb"          # 👈 this is the one that actually matters
