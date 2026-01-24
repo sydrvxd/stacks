@@ -1,0 +1,74 @@
+services:
+  webtop:
+    image: lscr.io/linuxserver/webtop:ubuntu-xfce
+    container_name: webtop
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Berlin
+
+      # 🔐 Credentials:
+      - PASSWORD=${WEBTOP_PASSWORD}
+      - CUSTOM_USER=${WEBTOP_USERNAME}
+
+      # GPU (keep these)
+      - NVIDIA_DRIVER_CAPABILITIES=compute,video,utility,graphics
+      - NVIDIA_VISIBLE_DEVICES=all
+
+      # 🔇 Stop Pulse clients from trying (prevents "pa_context_connect() failed")
+      - PULSE_SERVER=disabled
+
+      # 📦 Package mod (fix the VA-API package name)
+      - DOCKER_MODS=linuxserver/mods:universal-package-install
+      # libva-utils → vainfo  (prevents "Unable to locate package libva-utils")
+      - INSTALL_PACKAGES=gstreamer1.0-tools|gstreamer1.0-plugins-good|gstreamer1.0-plugins-bad|gstreamer1.0-plugins-ugly|gstreamer1.0-libav|libva2|vainfo|nvidia-vaapi-driver
+
+      # Optional VA-API wrapper for NVIDIA (leave if you want to try HW accel in Chromium)
+      - LIBVA_DRIVER_NAME=nvidia
+      # Optional dGPU hint (harmless)
+      - DRI_PRIME=1
+      # Zink not needed on NVIDIA
+      - DISABLE_ZINK=true
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [compute,video,utility,graphics]
+
+    devices:
+      - /dev/dri:/dev/dri
+
+    volumes:
+      - chromium-config:/config 
+
+    security_opt:
+      - no-new-privileges:true
+
+    # Stability & resources
+    shm_size: "4gb"          # 👈 this is the one that actually matters
+    # SHM_SIZE env is unused by LSIO; safe to remove
+
+    # Ensure /tmp has correct perms/owner (fixes "_X11-unix should be root")
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,mode=1777
+
+    ulimits:
+      nofile: 262144
+    pids_limit: 1024
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    ports:
+      - "3000:3000"   # 👈 add the web UI port (LSIO webtop default)
+      - "3001:3001"   # keep if you use the secondary service
+
+    restart: unless-stopped
+
+volumes:
+  chromium-config:
