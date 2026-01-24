@@ -28,7 +28,7 @@ services:
 
     volumes:
       - chromium-config:/config
-      - ./custom-cont-init.d:/custom-cont-init.d:ro
+      - ./custom-cont-init.d:/custom-cont-init.d
 
     security_opt:
       - seccomp:unconfined                      # Added: may help with D-Bus issues
