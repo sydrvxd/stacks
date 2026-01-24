@@ -6,29 +6,14 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Europe/Berlin
-
-      # 🔐 Credentials:
       - PASSWORD=${WEBTOP_PASSWORD}
       - CUSTOM_USER=${WEBTOP_USERNAME}
-
-      # GPU (keep these)
       - NVIDIA_DRIVER_CAPABILITIES=compute,video,utility,graphics
       - NVIDIA_VISIBLE_DEVICES=all
-
-      # 🔇 Stop Pulse clients from trying (prevents "pa_context_connect() failed")
-      - PULSE_SERVER=disabled
-
-      # 📦 Package mod (fix the VA-API package name)
       - DOCKER_MODS=linuxserver/mods:universal-package-install
-      # libva-utils → vainfo  (prevents "Unable to locate package libva-utils")
       - INSTALL_PACKAGES=gstreamer1.0-tools|gstreamer1.0-plugins-good|gstreamer1.0-plugins-bad|gstreamer1.0-plugins-ugly|gstreamer1.0-libav|libva2|vainfo|nvidia-vaapi-driver
-
-      # Optional VA-API wrapper for NVIDIA (leave if you want to try HW accel in Chromium)
       - LIBVA_DRIVER_NAME=nvidia
-      # Optional dGPU hint (harmless)
       - DRI_PRIME=1
-      # Zink not needed on NVIDIA
-      - DISABLE_ZINK=true
 
     deploy:
       resources:
@@ -43,9 +28,10 @@ services:
 
     volumes:
       - chromium-config:/config 
+      - ./webtop/custom-cont-init.d:/custom-cont-init.d
 
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges:false
 
     # Stability & resources
     shm_size: "8gb"          # 👈 this is the one that actually matters
