@@ -1,0 +1,150 @@
+# LiteLLM Proxy Configuration
+# Provides OpenAI-compatible API for local Ollama models
+#
+# API Endpoint: http://localhost:4000/v1
+# Compatible with: VS Code Continue, Cody, Cursor, any OpenAI SDK
+
+model_list:
+  # =============================================================================
+  # Code-focused models (recommended for VS Code)
+  # =============================================================================
+  - model_name: codellama
+    litellm_params:
+      model: ollama/codellama:13b
+      api_base: http://ollama:11434
+    model_info:
+      description: "Code Llama 13B - optimized for code completion"
+
+  - model_name: deepseek-coder
+    litellm_params:
+      model: ollama/deepseek-coder-v2:16b
+      api_base: http://ollama:11434
+    model_info:
+      description: "DeepSeek Coder V2 - excellent for code tasks"
+
+  - model_name: qwen-coder
+    litellm_params:
+      model: ollama/qwen2.5-coder:14b
+      api_base: http://ollama:11434
+    model_info:
+      description: "Qwen 2.5 Coder - strong multilingual code model"
+
+  # =============================================================================
+  # General-purpose models
+  # =============================================================================
+  - model_name: llama3.2
+    litellm_params:
+      model: ollama/llama3.2:latest
+      api_base: http://ollama:11434
+    model_info:
+      description: "Llama 3.2 - fast general purpose"
+
+  - model_name: llama3.3
+    litellm_params:
+      model: ollama/llama3.3:70b-instruct-q4_K_M
+      api_base: http://ollama:11434
+    model_info:
+      description: "Llama 3.3 70B Q4 - high quality, fits in 16GB VRAM"
+
+  - model_name: mistral
+    litellm_params:
+      model: ollama/mistral:latest
+      api_base: http://ollama:11434
+    model_info:
+      description: "Mistral 7B - fast and efficient"
+
+  - model_name: mixtral
+    litellm_params:
+      model: ollama/mixtral:8x7b
+      api_base: http://ollama:11434
+    model_info:
+      description: "Mixtral 8x7B MoE - strong performance"
+
+  - model_name: qwen2.5
+    litellm_params:
+      model: ollama/qwen2.5:14b
+      api_base: http://ollama:11434
+    model_info:
+      description: "Qwen 2.5 14B - excellent multilingual model"
+
+  - model_name: gemma2
+    litellm_params:
+      model: ollama/gemma2:27b
+      api_base: http://ollama:11434
+    model_info:
+      description: "Gemma 2 27B - Google's efficient model"
+
+  # =============================================================================
+  # Translation-focused models (for subtitle work)
+  # =============================================================================
+  - model_name: aya
+    litellm_params:
+      model: ollama/aya:35b
+      api_base: http://ollama:11434
+    model_info:
+      description: "Aya 35B - excellent for translation tasks"
+
+  - model_name: command-r
+    litellm_params:
+      model: ollama/command-r:35b
+      api_base: http://ollama:11434
+    model_info:
+      description: "Command R 35B - Cohere's multilingual model"
+
+  # =============================================================================
+  # Embedding model (for RAG in Open WebUI)
+  # =============================================================================
+  - model_name: nomic-embed-text
+    litellm_params:
+      model: ollama/nomic-embed-text
+      api_base: http://ollama:11434
+    model_info:
+      description: "Nomic Embed Text - for embeddings/RAG"
+
+  # =============================================================================
+  # Aliases for OpenAI API compatibility
+  # Map common OpenAI model names to local models
+  # =============================================================================
+  - model_name: gpt-4
+    litellm_params:
+      model: ollama/llama3.3:70b-instruct-q4_K_M
+      api_base: http://ollama:11434
+    model_info:
+      description: "Alias: maps gpt-4 requests to Llama 3.3 70B"
+
+  - model_name: gpt-4o
+    litellm_params:
+      model: ollama/qwen2.5:14b
+      api_base: http://ollama:11434
+    model_info:
+      description: "Alias: maps gpt-4o requests to Qwen 2.5 14B"
+
+  - model_name: gpt-4o-mini
+    litellm_params:
+      model: ollama/llama3.2:latest
+      api_base: http://ollama:11434
+    model_info:
+      description: "Alias: maps gpt-4o-mini requests to Llama 3.2"
+
+  - model_name: gpt-3.5-turbo
+    litellm_params:
+      model: ollama/mistral:latest
+      api_base: http://ollama:11434
+    model_info:
+      description: "Alias: maps gpt-3.5-turbo requests to Mistral"
+
+litellm_settings:
+  # Enable detailed logging
+  set_verbose: false
+  # Allow fallback to other models if primary fails
+  enable_fallbacks: true
+  # Cache responses (optional, reduces load)
+  cache: false
+  # Request timeout
+  request_timeout: 300
+
+general_settings:
+  # Master key for API authentication
+  master_key: ${LITELLM_MASTER_KEY}
+  # Enable model info endpoint
+  enable_public_model_hub: true
