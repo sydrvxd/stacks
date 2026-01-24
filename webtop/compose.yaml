@@ -8,7 +8,7 @@ services:
       - TZ=Europe/Berlin
       - PASSWORD=${WEBTOP_PASSWORD}
       - CUSTOM_USER=${WEBTOP_USERNAME}
-      - NVIDIA_DRIVER_CAPABILITIES=compute,video,utility,graphics
+      - NVIDIA_DRIVER_CAPABILITIES=all
       - NVIDIA_VISIBLE_DEVICES=all
       - DOCKER_MODS=linuxserver/mods:universal-package-install
       - INSTALL_PACKAGES=gstreamer1.0-tools|gstreamer1.0-plugins-good|gstreamer1.0-plugins-bad|gstreamer1.0-plugins-ugly|gstreamer1.0-libav|libva2|vainfo|nvidia-vaapi-driver
@@ -20,16 +20,19 @@ services:
         reservations:
           devices:
             - driver: nvidia
-              count: 1
-              capabilities: [compute,video,utility,graphics]
+              count: all                        # Changed: expose all GPU capabilities
+              capabilities: [gpu, compute, video, utility, graphics]
 
     devices:
       - /dev/dri:/dev/dri
 
     volumes:
-      - chromium-config:/config 
+      - chromium-config:/config
+      - ./custom-cont-init.d:/custom-cont-init.d:ro
 
-    #security_opt:
+    security_opt:
+      - seccomp:unconfined                      # Added: may help with D-Bus issues
+      - apparmor:unconfined                     # Added: reduces permission errors
     #  - no-new-privileges:true
 
     # Stability & resources
@@ -40,9 +43,13 @@ services:
     tmpfs:
       - /tmp:rw,nosuid,nodev,mode=1777
 
+    # Resource limits for your hardware
+    cpus: 10
+    mem_limit: 24g
+
     ulimits:
       nofile: 262144
-    pids_limit: 1024
+    pids_limit: 2048                            # Increased from 1024
     logging:
       driver: json-file
       options:
