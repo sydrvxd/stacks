@@ -28,7 +28,6 @@ services:
 
     volumes:
       - chromium-config:/config 
-      - ./webtop/custom-cont-init.d:/custom-cont-init.d
 
     #security_opt:
     #  - no-new-privileges:true
