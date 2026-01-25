@@ -81,6 +81,7 @@ model_list:
     litellm_params:
       model: ollama/aya-expanse:8b
       api_base: http://ollama:11434
+      timeout: 600
     model_info:
       description: "Aya Expanse 8B - optimized for DE->UK translation"
 
@@ -88,6 +89,7 @@ model_list:
     litellm_params:
       model: ollama/aya-expanse:32b
       api_base: http://ollama:11434
+      timeout: 600
     model_info:
       description: "Aya Expanse 32B - best quality for translation"
 
@@ -154,8 +156,11 @@ litellm_settings:
   enable_fallbacks: true
   # Cache responses (optional, reduces load)
   cache: false
-  # Request timeout
-  request_timeout: 300
+  # Request timeout (10 minutes for model loading)
+  request_timeout: 600
+  # Disable cooldown so retries work immediately
+  allowed_fails: 10
+  cooldown_time: 0
 
 general_settings:
   # Enable model info endpoint

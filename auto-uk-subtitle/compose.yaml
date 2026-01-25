@@ -36,9 +36,9 @@ services:
       - WHISPER_MODEL=${WHISPER_MODEL:-large-v3}
       - WHISPER_LANGUAGE=${WHISPER_LANGUAGE:-de}
 
-      # LLM API (from ai-stack via LiteLLM)
-      - LLM_API_URL=${LLM_API_URL:-http://litellm:4000/v1}
-      - LLM_API_KEY=${LLM_API_KEY:-sk-local-dev-key}
+      # LLM API (direct to Ollama - has OpenAI-compatible endpoint)
+      - LLM_API_URL=${LLM_API_URL:-http://ollama:11434/v1}
+      - LLM_API_KEY=${LLM_API_KEY:-ollama}
       - LLM_MODEL=${LLM_MODEL:-aya-expanse:8b}
       - LLM_TRANSLATION_MODEL=${LLM_TRANSLATION_MODEL:-aya-expanse:8b}
       - LLM_TEMPERATURE=${LLM_TEMPERATURE:-0.3}
@@ -46,8 +46,8 @@ services:
 
       # Translation settings
       - TRANSLATION_CHUNK_SIZE=${TRANSLATION_CHUNK_SIZE:-25000}
-      - TRANSLATION_MAX_RETRIES=${TRANSLATION_MAX_RETRIES:-3}
-      - TRANSLATION_TIMEOUT=${TRANSLATION_TIMEOUT:-300}
+      - TRANSLATION_MAX_RETRIES=${TRANSLATION_MAX_RETRIES:-5}
+      - TRANSLATION_TIMEOUT=${TRANSLATION_TIMEOUT:-600}
 
       # Processing
       - MAX_PARALLEL_JOBS=${MAX_PARALLEL_JOBS:-2}
