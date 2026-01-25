@@ -77,6 +77,20 @@ model_list:
   # =============================================================================
   # Translation-focused models (for subtitle work)
   # =============================================================================
+  - model_name: aya-expanse:8b
+    litellm_params:
+      model: ollama/aya-expanse:8b
+      api_base: http://ollama:11434
+    model_info:
+      description: "Aya Expanse 8B - optimized for DE->UK translation"
+
+  - model_name: aya-expanse:32b
+    litellm_params:
+      model: ollama/aya-expanse:32b
+      api_base: http://ollama:11434
+    model_info:
+      description: "Aya Expanse 32B - best quality for translation"
+
   - model_name: aya
     litellm_params:
       model: ollama/aya:35b

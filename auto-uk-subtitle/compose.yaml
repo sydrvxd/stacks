@@ -1,0 +1,124 @@
+# Auto UK Subtitle Stack
+# Automatic German to Ukrainian subtitle transcription and translation
+#
+# Dependencies:
+# - ai-stack (Ollama, Whisper API, LiteLLM)
+#
+# Usage:
+# 1. Start ai-stack first: docker compose -p ai-stack up -d
+# 2. Then start this stack: docker compose -p auto-uk-subtitle up -d
+
+services:
+  # =============================================================================
+  # AUTO UK SUBTITLE - Web Service
+  # =============================================================================
+  auto-uk-subtitle:
+    build:
+      context: ${APP_SOURCE_PATH:-/app/source}
+      dockerfile: Dockerfile
+    image: auto-uk-subtitle:latest
+    container_name: auto-uk-subtitle
+    restart: unless-stopped
+
+    environment:
+      # Application
+      - APP_NAME=Auto UK Subtitle
+      - DEBUG=${DEBUG:-false}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+
+      # Media paths
+      - MEDIA_PATH=/media
+      - OUTPUT_PATH=/data/output
+      - TEMP_PATH=/tmp/auto-uk-subtitle
+
+      # Whisper API (from ai-stack)
+      - WHISPER_API_URL=${WHISPER_API_URL:-http://whisper-api:8000}
+      - WHISPER_MODEL=${WHISPER_MODEL:-large-v3}
+      - WHISPER_LANGUAGE=${WHISPER_LANGUAGE:-de}
+
+      # LLM API (from ai-stack via LiteLLM)
+      - LLM_API_URL=${LLM_API_URL:-http://litellm:4000/v1}
+      - LLM_API_KEY=${LLM_API_KEY:-sk-local-dev-key}
+      - LLM_MODEL=${LLM_MODEL:-aya-expanse:8b}
+      - LLM_TRANSLATION_MODEL=${LLM_TRANSLATION_MODEL:-aya-expanse:8b}
+      - LLM_TEMPERATURE=${LLM_TEMPERATURE:-0.3}
+      - LLM_MAX_TOKENS=${LLM_MAX_TOKENS:-4096}
+
+      # Translation settings
+      - TRANSLATION_CHUNK_SIZE=${TRANSLATION_CHUNK_SIZE:-25000}
+      - TRANSLATION_MAX_RETRIES=${TRANSLATION_MAX_RETRIES:-3}
+      - TRANSLATION_TIMEOUT=${TRANSLATION_TIMEOUT:-300}
+
+      # Processing
+      - MAX_PARALLEL_JOBS=${MAX_PARALLEL_JOBS:-2}
+      - SPOT_CHECK_ENABLED=${SPOT_CHECK_ENABLED:-true}
+
+      # Redis (optional, for job persistence)
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
+
+    volumes:
+      # Media files (your QNAP share)
+      - ${MEDIA_PATH:-/mnt/qnap/Multimedia}:/media:ro
+
+      # Output directory (can write subtitles here)
+      - subtitle-output:/data/output
+
+      # Temp files
+      - subtitle-temp:/tmp/auto-uk-subtitle
+
+    ports:
+      - "${WEB_PORT:-8085}:8080"
+
+    networks:
+      - ai-stack-network
+      - default
+
+    depends_on:
+      redis:
+        condition: service_healthy
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+    mem_limit: 2g
+    cpus: 2
+
+  # =============================================================================
+  # REDIS - Job Queue (optional but recommended)
+  # =============================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: auto-uk-subtitle-redis
+    restart: unless-stopped
+
+    command: redis-server --appendonly yes
+
+    volumes:
+      - redis-data:/data
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+    mem_limit: 256m
+
+volumes:
+  subtitle-output:
+    name: auto-uk-subtitle-output
+  subtitle-temp:
+    name: auto-uk-subtitle-temp
+  redis-data:
+    name: auto-uk-subtitle-redis
+
+networks:
+  default:
+    name: auto-uk-subtitle-network
+  ai-stack-network:
+    external: true
+    name: ai-stack-network
