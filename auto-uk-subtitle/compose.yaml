@@ -42,10 +42,12 @@ services:
       - LLM_MODEL=${LLM_MODEL:-aya-expanse:8b}
       - LLM_TRANSLATION_MODEL=${LLM_TRANSLATION_MODEL:-aya-expanse:8b}
       - LLM_TEMPERATURE=${LLM_TEMPERATURE:-0.3}
-      - LLM_MAX_TOKENS=${LLM_MAX_TOKENS:-4096}
+      - LLM_MAX_TOKENS=${LLM_MAX_TOKENS:-8192}
 
       # Translation settings
-      - TRANSLATION_CHUNK_SIZE=${TRANSLATION_CHUNK_SIZE:-25000}
+      # Chunk size is now calculated dynamically based on model's context limit.
+      # This value is only used as fallback if model context cannot be determined.
+      - TRANSLATION_CHUNK_SIZE=${TRANSLATION_CHUNK_SIZE:-6000}
       - TRANSLATION_MAX_RETRIES=${TRANSLATION_MAX_RETRIES:-5}
       - TRANSLATION_TIMEOUT=${TRANSLATION_TIMEOUT:-600}
 
