@@ -145,16 +145,13 @@ services:
   # - AutoUkSubtitle and other apps expecting OpenAI API
   # - Any tool that supports OpenAI API format
   litellm:
-    image: ghcr.io/berriai/litellm:main-v1.55.8
+    image: ghcr.io/berriai/litellm:main-v1.40.0
     container_name: litellm
     restart: unless-stopped
 
     depends_on:
       ollama:
         condition: service_healthy
-
-    environment:
-      - LITELLM_MASTER_KEY=${LITELLM_API_KEY:-sk-local-dev-key}
 
     volumes:
       - ./litellm-config.yaml:/app/config.yaml:ro

@@ -158,7 +158,5 @@ litellm_settings:
   request_timeout: 300
 
 general_settings:
-  # Master key for API authentication
-  master_key: ${LITELLM_MASTER_KEY}
   # Enable model info endpoint
   enable_public_model_hub: true
