@@ -6,7 +6,7 @@
 #
 # Usage:
 # 1. Start ai-stack first: docker compose -p ai-stack up -d
-# 2. Then start this stack: docker compose -p auto-uk-subtitle up -d
+# 2. Then start this stack: docker compose -p auto-uk-subtitle up -d --build
 
 services:
   # =============================================================================
@@ -14,7 +14,7 @@ services:
   # =============================================================================
   auto-uk-subtitle:
     build:
-      context: ${APP_SOURCE_PATH:-/app/source}
+      context: https://github.com/sydrvxd/AutoUkSubtitle_WebService.git
       dockerfile: Dockerfile
     image: auto-uk-subtitle:latest
     container_name: auto-uk-subtitle
