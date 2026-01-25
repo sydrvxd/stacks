@@ -145,7 +145,7 @@ services:
   # - AutoUkSubtitle and other apps expecting OpenAI API
   # - Any tool that supports OpenAI API format
   litellm:
-    image: ghcr.io/berriai/litellm:main-latest
+    image: ghcr.io/berriai/litellm:main-v1.55.8
     container_name: litellm
     restart: unless-stopped
 
@@ -155,15 +155,11 @@ services:
 
     environment:
       - LITELLM_MASTER_KEY=${LITELLM_API_KEY:-sk-local-dev-key}
-      - LITELLM_LOG=DEBUG
-      # Disable database requirement for simple proxy mode
-      - DATABASE_URL=
-      - STORE_MODEL_IN_DB=false
 
     volumes:
       - ./litellm-config.yaml:/app/config.yaml:ro
 
-    command: ["--config", "/app/config.yaml", "--port", "4000", "--host", "0.0.0.0", "--detailed_debug"]
+    command: ["--config", "/app/config.yaml", "--port", "4000", "--host", "0.0.0.0"]
 
     ports:
       - "${LITELLM_PORT:-4000}:4000"
