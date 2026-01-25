@@ -38,10 +38,11 @@ services:
 
       # LLM API (direct to Ollama - has OpenAI-compatible endpoint)
       - LLM_API_URL=${LLM_API_URL:-http://ollama:11434/v1}
+      - OLLAMA_API_URL=${OLLAMA_API_URL:-http://ollama:11434}
       - LLM_API_KEY=${LLM_API_KEY:-ollama}
-      - LLM_MODEL=${LLM_MODEL:-aya-expanse:8b}
-      - LLM_TRANSLATION_MODEL=${LLM_TRANSLATION_MODEL:-aya-expanse:8b}
-      - LLM_TEMPERATURE=${LLM_TEMPERATURE:-0.3}
+      - LLM_MODEL=${LLM_MODEL:-gemma3:12b}
+      - LLM_TRANSLATION_MODEL=${LLM_TRANSLATION_MODEL:-gemma3:12b}
+      - LLM_TEMPERATURE=${LLM_TEMPERATURE:-0.1}
       - LLM_MAX_TOKENS=${LLM_MAX_TOKENS:-8192}
 
       # Translation settings
@@ -59,10 +60,10 @@ services:
       - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
 
     volumes:
-      # Media files (your QNAP share)
-      - ${MEDIA_PATH:-/mnt/qnap/Multimedia}:/media:ro
+      # Media files (your QNAP share) - read-write to save .uk.srt alongside videos
+      - ${MEDIA_PATH:-/mnt/qnap/Multimedia}:/media:rw
 
-      # Output directory (can write subtitles here)
+      # Output directory (fallback for subtitle output)
       - subtitle-output:/data/output
 
       # Temp files
