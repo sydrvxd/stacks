@@ -183,8 +183,18 @@ services:
     container_name: openedai-speech
     restart: unless-stopped
 
+    # GPU passthrough for RTX 5070 Ti
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu, compute]
+
     environment:
       - TTS_HOME=/data
+      - NVIDIA_VISIBLE_DEVICES=all
       # Default voice settings
       - DEFAULT_VOICE=nova
       - DEFAULT_MODEL=tts-1-hd
@@ -195,9 +205,7 @@ services:
     ports:
       - "${TTS_PORT:-8001}:8000"
 
-    # CPU is sufficient for TTS
-    mem_limit: 4g
-    cpus: 4
+    mem_limit: 8g
 
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
