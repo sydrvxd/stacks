@@ -47,7 +47,7 @@ services:
       - "${OLLAMA_PORT:-11434}:11434"
 
     # Resource limits
-    mem_limit: 32g
+    mem_limit: 48g
     cpus: 8
 
     healthcheck:
