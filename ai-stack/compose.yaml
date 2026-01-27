@@ -184,20 +184,20 @@ services:
     restart: unless-stopped
 
     # GPU passthrough for RTX 5070 Ti
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu, compute]
+    #deploy:
+    #  resources:
+    #    reservations:
+    #      devices:
+    #        - driver: nvidia
+    #          count: 1
+    #          capabilities: [gpu, compute]
 
     environment:
       - TTS_HOME=/data
-      - NVIDIA_VISIBLE_DEVICES=all
+      #- NVIDIA_VISIBLE_DEVICES=all
       # Default voice settings
       - DEFAULT_VOICE=nova
-      - DEFAULT_MODEL=tts-1-hd
+      - DEFAULT_MODEL=tts-1
 
     volumes:
       - openedai-speech-data:/data
