@@ -35,8 +35,8 @@ services:
       - OLLAMA_HOST=0.0.0.0
       - OLLAMA_ORIGINS=*
       # Optimize for 16GB VRAM
-      - OLLAMA_NUM_PARALLEL=2
-      - OLLAMA_MAX_LOADED_MODELS=2
+      - OLLAMA_NUM_PARALLEL=1
+      - OLLAMA_MAX_LOADED_MODELS=1
       # Flash attention for better performance
       - OLLAMA_FLASH_ATTENTION=1
 
@@ -47,7 +47,7 @@ services:
       - "${OLLAMA_PORT:-11434}:11434"
 
     # Resource limits
-    mem_limit: 32g
+    mem_limit: 48g
     cpus: 8
 
     healthcheck:
@@ -184,20 +184,20 @@ services:
     restart: unless-stopped
 
     # GPU passthrough for RTX 5070 Ti
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu, compute]
+    #deploy:
+    #  resources:
+    #    reservations:
+    #      devices:
+    #        - driver: nvidia
+    #          count: 1
+    #          capabilities: [gpu, compute]
 
     environment:
       - TTS_HOME=/data
-      - NVIDIA_VISIBLE_DEVICES=all
+      #- NVIDIA_VISIBLE_DEVICES=all
       # Default voice settings
       - DEFAULT_VOICE=nova
-      - DEFAULT_MODEL=tts-1-hd
+      - DEFAULT_MODEL=tts-1
 
     volumes:
       - openedai-speech-data:/data
@@ -252,4 +252,5 @@ volumes:
 
 networks:
   default:
+    external: true
     name: ai-stack-network
