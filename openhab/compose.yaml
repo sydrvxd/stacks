@@ -1,0 +1,77 @@
+version: "3.9"
+
+services:
+  openhab:
+    image: openhab/openhab:latest
+    container_name: openhab
+    hostname: openhab
+
+    tty: true
+    stdin_open: true
+
+    # Matches: Entrypoint ["/entrypoint"] + Cmd ["su-exec","openhab","tini","-s","./start.sh"]
+    entrypoint: ["/entrypoint"]
+    command: ["su-exec", "openhab", "tini", "-s", "./start.sh"]
+    working_dir: /openhab
+
+    environment:
+      LANGUAGE: "en_US.UTF-8"
+      LANG: "en_US.UTF-8"
+      LC_ALL: "en_US.UTF-8"
+
+      TZ: "Europe/Berlin"
+      CRYPTO_POLICY: "limited"
+
+      OPENHAB_HOME: "/openhab"
+      OPENHAB_CONF: "/openhab/conf"
+      OPENHAB_USERDATA: "/openhab/userdata"
+      OPENHAB_LOGDIR: "/openhab/userdata/logs"
+      OPENHAB_BACKUPS: "/openhab/userdata/backup"
+
+      OPENHAB_HTTP_PORT: "8080"
+      OPENHAB_HTTPS_PORT: "8443"
+
+      USER_ID: "9001"
+      GROUP_ID: "9001"
+      KARAF_EXEC: "exec"
+
+      EXTRA_SHELL_OPTS: ""
+      EXTRA_JAVA_OPTS: " -Duser.timezone=Europe/Berlin -Dgnu.io.rxtx.SerialPorts=/dev/ttyUSB0:/dev/ttyS0:/dev/ttyS2:/dev/ttyACM"
+
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+      - "8101:8101"
+      - "5007:5007"
+
+    volumes:
+      - openhab-addons-5:/openhab/addons
+      - openhab-conf-5:/openhab/conf
+      - openhab-userdata-5:/openhab/userdata
+
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:${OPENHAB_HTTP_PORT}/ || exit 1"]
+      interval: 300s
+      timeout: 5s
+      retries: 3
+
+    networks:
+      qnet-static-eth0-79e6cc:
+        ipv4_address: 192.168.1.10
+
+    # Your inspect shows AppArmorProfile "unconfined"
+    security_opt:
+      - apparmor=unconfined
+    restart: unless-stopped
+
+volumes:
+  openhab-addons-5:
+    external: true
+  openhab-conf-5:
+    external: true
+  openhab-userdata-5:
+    external: true
+
+networks:
+  qnet-static-eth0-79e6cc:
+    external: true
